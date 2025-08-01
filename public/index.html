@@ -27,6 +27,25 @@
       <tbody>
       </tbody>
     </table>
+
+    <h2>IP 信息查询</h2>
+    <form id="ip-form">
+      <label for="ip">IP 或域名：</label>
+      <input type="text" id="ip" placeholder="例如：8.8.8.8" />
+      <button type="submit">查询</button>
+    </form>
+    <table id="ip-result">
+      <thead>
+        <tr>
+          <th>查询</th>
+          <th>国家</th>
+          <th>地区</th>
+          <th>城市</th>
+          <th>ISP</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
   <script src="script.js"></script>
 </body>
