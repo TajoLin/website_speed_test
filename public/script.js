@@ -5,6 +5,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('test-form');
   const urlsInput = document.getElementById('urls');
   const resultsBody = document.querySelector('#results tbody');
+  const ipSpan = document.getElementById('ip');
+  const locationSpan = document.getElementById('location');
+  const riskSpan = document.getElementById('risk');
+
+  async function fetchIPInfo() {
+    try {
+      const res = await fetch('/api/ipinfo');
+      const data = await res.json();
+      ipSpan.innerText = data.ip || '未知';
+      const geo = data.location;
+      let locText = '未知';
+      if (geo) {
+        const parts = [];
+        if (geo.country) parts.push(geo.country);
+        if (geo.region) parts.push(geo.region);
+        if (geo.city) parts.push(geo.city);
+        locText = parts.join(' ');
+      }
+      locationSpan.innerText = locText || '未知';
+      riskSpan.innerText = data.risk || '未知';
+    } catch (e) {
+      ipSpan.innerText = '错误';
+      locationSpan.innerText = '错误';
+      riskSpan.innerText = '错误';
+    }
+  }
+
+  fetchIPInfo();
 
   /**
    * Runs tests on each URL sequentially so as not to overload the server.

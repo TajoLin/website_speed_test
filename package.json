@@ -1,0 +1,17 @@
+{
+  "name": "website_speed_test",
+  "version": "1.0.0",
+  "description": "一个简单而强大的网站速度测试工具，用于测量网站的TTFB（首字节时间）、总响应时间和下载字节数。",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "geoip-lite": "^1.4.10"
+  }
+}
