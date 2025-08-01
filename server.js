@@ -122,6 +122,37 @@ function testURL(testUrl, callback) {
 }
 
 /**
+ * Fetch IP information such as location and ISP using the ip-api service.
+ *
+ * @param {string} ip IP address or domain name
+ * @param {(err:Error|null,data?:object)=>void} callback
+ */
+function getIpInfo(ip, callback) {
+  const apiUrl = `http://ip-api.com/json/${encodeURIComponent(ip)}?lang=zh-CN`;
+  const req = http.get(apiUrl, (res) => {
+    let data = '';
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => data += chunk);
+    res.on('end', () => {
+      try {
+        const json = JSON.parse(data);
+        if (json.status === 'fail') {
+          callback(new Error(json.message || 'IP lookup failed'));
+        } else {
+          callback(null, json);
+        }
+      } catch (err) {
+        callback(err);
+      }
+    });
+  });
+  req.on('error', (err) => callback(err));
+  req.setTimeout(10000, () => {
+    req.destroy(new Error('Request timed out'));
+  });
+}
+
+/**
  * Serve static files from the public directory.
  *
  * @param {string} filePath Absolute path on disk
@@ -150,6 +181,24 @@ function serveStatic(filePath, res) {
 const server = http.createServer((req, res) => {
   const parsedUrl = urlParser.parse(req.url, true);
   const pathname = parsedUrl.pathname || '';
+
+  if (pathname === '/api/ipinfo') {
+    const ip = parsedUrl.query.ip;
+    if (!ip) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Missing ip parameter' }));
+      return;
+    }
+    getIpInfo(ip, (err, data) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      if (err) {
+        res.end(JSON.stringify({ ip, error: err.message }));
+      } else {
+        res.end(JSON.stringify(data));
+      }
+    });
+    return;
+  }
 
   if (pathname === '/api/test') {
     // API endpoint: run a speed/latency test on the supplied URL
