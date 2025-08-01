@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网站速度与延迟测试</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>网站速度与延迟测试</h1>
+    <p>输入要测试的网址（多个网址用逗号分隔），点击“开始测试”即可查看每个站点的首字节时间 (TTFB)、总响应时间和下载字节数。</p>
+    <form id="test-form">
+      <label for="urls">测试列表：</label>
+      <input type="text" id="urls" value="youtube.com, chat.openai.com, openai.com, netflix.com" placeholder="例如：example.com, another.com" />
+      <button type="submit">开始测试</button>
+    </form>
+    <table id="results">
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>TTFB (毫秒)</th>
+          <th>总时间 (毫秒)</th>
+          <th>下载字节数</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
