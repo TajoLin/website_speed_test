@@ -11,6 +11,8 @@ const https = require('https');
 const urlParser = require('url');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+const geoip = require('geoip-lite');
 
 /**
  * Measure the Time To First Byte (TTFB) and total download time for a URL.
@@ -150,6 +152,33 @@ function serveStatic(filePath, res) {
 const server = http.createServer((req, res) => {
   const parsedUrl = urlParser.parse(req.url, true);
   const pathname = parsedUrl.pathname || '';
+
+  if (pathname === '/api/ipinfo') {
+    // Provide local IP information using offline lookup
+    const interfaces = os.networkInterfaces();
+    let ip = '';
+    for (const name of Object.keys(interfaces)) {
+      for (const iface of interfaces[name]) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          ip = iface.address;
+          break;
+        }
+      }
+      if (ip) break;
+    }
+
+    const geo = ip ? geoip.lookup(ip) : null;
+    let risk = 'unknown';
+    if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(ip)) {
+      risk = 'private network (low risk)';
+    } else if (ip) {
+      risk = 'public network (risk unknown)';
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ip, location: geo, risk }));
+    return;
+  }
 
   if (pathname === '/api/test') {
     // API endpoint: run a speed/latency test on the supplied URL

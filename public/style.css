@@ -76,3 +76,9 @@ th {
   background-color: #f0f2f5;
   font-weight: 600;
 }
+
+.ip-info {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+}
